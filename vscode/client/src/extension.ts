@@ -8,7 +8,15 @@
  ******************************************************************************/
 
 import * as path from 'path';
-import { commands, ExtensionContext, window, workspace, WorkspaceConfiguration, StatusBarAlignment, StatusBarItem } from 'vscode';
+import {
+  commands,
+  ExtensionContext,
+  StatusBarAlignment,
+  StatusBarItem,
+  window,
+  workspace,
+  WorkspaceConfiguration,
+} from 'vscode';
 
 import {
   Disposable,
@@ -71,7 +79,7 @@ export function activate(context: ExtensionContext): void {
     setStatusBarMessage(newShowProfiling);
 
     window.showInformationMessage(
-      `Microclimate Profiling: Method profiling ${ newShowProfiling ? 'enabled' : 'disabled' }.`,
+      `Microclimate Profiling: Function profiling ${ newShowProfiling ? 'enabled' : 'disabled' }.`,
     );
   });
 
@@ -102,7 +110,7 @@ function isShowProfiling(): boolean {
 // only undefined initially (on activation); will be present the rest of the time.
 let statusBarItem: StatusBarItem | undefined;
 
-function setStatusBarMessage(profilingEnabled: boolean) {
+function setStatusBarMessage(profilingEnabled: boolean): void {
   if (statusBarItem != null) {
     statusBarItem.dispose();
   }
@@ -110,8 +118,8 @@ function setStatusBarMessage(profilingEnabled: boolean) {
   // Priority 1000 is totally arbitrary, I like having it as left as possible.
   statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 1000);
   // https://octicons.github.com/icon/dashboard/
-  statusBarItem.text = `$(dashboard) ${profilingEnabled ? "Profiling on " : "Profiling off"}`;
+  statusBarItem.text = `$(dashboard) ${profilingEnabled ? 'Profiling on' : 'Profiling off' }`;
   statusBarItem.command = TOGGLE_COMMAND_ID;
-  statusBarItem.tooltip = "Click to toggle";
+  statusBarItem.tooltip = 'Click to toggle';
   statusBarItem.show();
 }

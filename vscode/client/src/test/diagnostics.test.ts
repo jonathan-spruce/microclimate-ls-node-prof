@@ -8,49 +8,55 @@
  ******************************************************************************/
 'use strict';
 
-
 import * as assert from 'assert';
-import * as vscode from 'vscode';
+import {
+  Diagnostic,
+  DiagnosticSeverity,
+  languages,
+  Position,
+  Range,
+  Uri,
+} from 'vscode';
 import { activate, getDocUri } from './helper';
 
 describe('Should get diagnostics', () => {
-  const docUri: vscode.Uri = getDocUri('test.js');
+  const docUri: Uri = getDocUri('test.js');
 
   it('Generates the message and displays at the right line', async () => {
     await testDiagnostics(docUri, [
       {
         message: 'Function example accumulated 55 ticks',
         range: toRange(6, 0, 6, 9999),
-        severity: vscode.DiagnosticSeverity.Warning,
+        severity: DiagnosticSeverity.Warning,
         source: 'Microclimate Language Server',
       },
       {
         message: 'Function <anonymous function> accumulated 115 ticks',
         range: toRange(0, 0, 0, 9999),
-        severity: vscode.DiagnosticSeverity.Warning,
+        severity: DiagnosticSeverity.Warning,
         source: 'Microclimate Language Server' },
     ]);
   });
 });
 
-function toRange(sLine: number, sChar: number, eLine: number, eChar: number): vscode.Range {
-  const start: vscode.Position = new vscode.Position(sLine, sChar);
-  const end: vscode.Position = new vscode.Position(eLine, eChar);
-  return new vscode.Range(start, end);
+function toRange(sLine: number, sChar: number, eLine: number, eChar: number): Range {
+  const start: Position = new Position(sLine, sChar);
+  const end: Position = new Position(eLine, eChar);
+  return new Range(start, end);
 }
 
-async function getDiagnostics(docUri: vscode.Uri): Promise<vscode.Diagnostic[]> {
+async function getDiagnostics(docUri: Uri): Promise<Diagnostic[]> {
   await activate(docUri);
-  return vscode.languages.getDiagnostics(docUri);
+  return languages.getDiagnostics(docUri);
 }
 
-async function testDiagnostics(docUri: vscode.Uri, expectedDiagnostics: vscode.Diagnostic[]): Promise<void> {
+async function testDiagnostics(docUri: Uri, expectedDiagnostics: Diagnostic[]): Promise<void> {
 
-  const actualDiagnostics: vscode.Diagnostic[] = await getDiagnostics(docUri);
+  const actualDiagnostics: Diagnostic[] = await getDiagnostics(docUri);
   assert.equal(actualDiagnostics.length, expectedDiagnostics.length);
 
-  expectedDiagnostics.forEach((expectedDiagnostic: vscode.Diagnostic, i: number) => {
-    const actualDiagnostic: vscode.Diagnostic = actualDiagnostics[i];
+  expectedDiagnostics.forEach((expectedDiagnostic: Diagnostic, i: number) => {
+    const actualDiagnostic: Diagnostic = actualDiagnostics[i];
     console.dir(actualDiagnostic);
 
     assert.equal(actualDiagnostic.message, expectedDiagnostic.message);
